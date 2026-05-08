@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business Dashboard — Locify</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #080c14;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: rgba(255,255,255,0.07);
+    --gold: #f59e0b;
+    --gold2: #fbbf24;
+    --gold-glow: rgba(245,158,11,0.12);
+    --red: #ef4444;
+    --red-glow: rgba(239,68,68,0.12);
+    --green: #10b981;
+    --text: #f1f5f9;
+    --muted: #64748b;
+    --muted2: #94a3b8;
+    --radius: 14px;
+    --radius-sm: 9px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 60px;
+  }
+
+  header {
+    background: rgba(8,12,20,0.9);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    height: 62px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .logo { display: flex; align-items: center; gap: 10px; }
+
+  .logo-mark {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, var(--gold), #d97706);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    color: #000;
+  }
+
+  .logo-text {
+    font-size: 18px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #fff 60%, var(--gold2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .biz-badge {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--green);
+    background: rgba(16,185,129,0.12);
+    border: 1px solid rgba(16,185,129,0.3);
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .btn-logout {
+    padding: 6px 14px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--muted2);
+    font-family: 'Sora', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-logout:hover { border-color: rgba(239,68,68,0.4); color: var(--red); }
+
+  .hidden { display: none !important; }
+
+  /* LOGIN */
+  #loginBox {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .login-card {
+    width: 100%;
+    max-width: 380px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 36px 28px;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+  }
+
+  .login-icon {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, var(--green), #059669);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin: 0 auto 20px;
+    box-shadow: 0 8px 24px rgba(16,185,129,0.25);
+  }
+
+  .login-title { text-align: center; font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .login-sub   { text-align: center; font-size: 13px; color: var(--muted); margin-bottom: 28px; }
+
+  .field-label {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--muted2);
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+
+  .field-wrap { margin-bottom: 16px; }
+
+  input {
+    width: 100%;
+    padding: 13px 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: 'Sora', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.25s;
+  }
+
+  input:focus {
+    border-color: rgba(16,185,129,0.4);
+    box-shadow: 0 0 0 3px rgba(16,185,129,0.08);
+  }
+
+  input::placeholder { color: var(--muted); }
+
+  .btn-primary {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(135deg, var(--green), #059669);
+    border: none;
+    border-radius: var(--radius-sm);
+    color: #fff;
+    font-family: 'Sora', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.2s;
+    box-shadow: 0 6px 20px rgba(16,185,129,0.2);
+  }
+
+  .btn-primary:hover { transform: translateY(-1px); }
+  .btn-primary:active { transform: scale(0.98); }
+
+  .auth-err {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--red);
+    text-align: center;
+    min-height: 20px;
+  }
+
+  .auth-tabs {
+    display: flex;
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 24px;
+    gap: 4px;
+  }
+
+  .auth-tab {
+    flex: 1;
+    padding: 9px;
+    border: none;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--muted2);
+    font-family: 'Sora', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .auth-tab.active {
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+
+  .auth-section { display: none; }
+  .auth-section.active { display: block; }
+
+  .pending-notice {
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: rgba(245,158,11,0.08);
+    border: 1px solid rgba(245,158,11,0.2);
+    border-radius: 10px;
+    font-size: 12.5px;
+    color: var(--gold2);
+    line-height: 1.5;
+    text-align: center;
+  }
+
+  /* NO SHOP */
+  #noShopBox {
+    padding: 60px 24px;
+    text-align: center;
+    color: var(--muted);
+  }
+
+  #noShopBox .big-icon { font-size: 48px; margin-bottom: 16px; }
+  #noShopBox h2 { font-size: 18px; color: var(--text); margin-bottom: 8px; }
+  #noShopBox p  { font-size: 13px; line-height: 1.6; }
+
+  /* PANEL */
+  #panel { padding: 20px 16px; max-width: 600px; margin: 0 auto; }
+
+  .shop-info-card {
+    background: var(--surface);
+    border: 1px solid rgba(16,185,129,0.2);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .shop-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: var(--surface2);
+  }
+
+  .shop-info-name { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .shop-info-meta { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+  .section-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gold2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 28px 0 16px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .form-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 6px;
+  }
+
+  .btn-green {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(135deg, var(--green), #059669);
+    border: none;
+    border-radius: var(--radius-sm);
+    color: white;
+    font-family: 'Sora', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 4px;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(16,185,129,0.2);
+  }
+
+  .btn-green:hover { transform: translateY(-1px); }
+  .btn-green:active { transform: scale(0.98); }
+
+  .btn-gold {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(135deg, var(--gold), #d97706);
+    border: none;
+    border-radius: var(--radius-sm);
+    color: #000;
+    font-family: 'Sora', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 4px;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(245,158,11,0.2);
+  }
+
+  .btn-gold:hover { transform: translateY(-1px); }
+  .btn-gold:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .item-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    animation: fadeUp 0.3s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .item-info { flex: 1; min-width: 0; }
+
+  .item-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 3px;
+  }
+
+  .item-meta {
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .item-badge {
+    padding: 2px 8px;
+    background: var(--gold-glow);
+    border: 1px solid rgba(245,158,11,0.2);
+    border-radius: 10px;
+    font-size: 10.5px;
+    color: var(--gold2);
+    font-weight: 500;
+    text-transform: capitalize;
+  }
+
+  .price-tag {
+    font-family: 'Space Mono', monospace;
+    color: var(--gold2);
+    font-size: 12.5px;
+    font-weight: 700;
+  }
+
+  .btn-del {
+    flex-shrink: 0;
+    padding: 7px 14px;
+    background: var(--red-glow);
+    border: 1px solid rgba(239,68,68,0.2);
+    border-radius: 8px;
+    color: var(--red);
+    font-family: 'Sora', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-del:hover { background: rgba(239,68,68,0.2); border-color: rgba(239,68,68,0.4); }
+
+  .count-badge {
+    margin-left: 8px;
+    font-size: 11px;
+    padding: 2px 9px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--muted2);
+    font-family: 'Space Mono', monospace;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--surface2);
+    border: 1px solid rgba(16,185,129,0.3);
+    color: #6ee7b7;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 500;
+    z-index: 999;
+    transition: transform 0.3s ease;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    white-space: nowrap;
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* 5-col analytics */
+  .analytics-stats {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+  }
+
+  @media (max-width: 480px) {
+    .analytics-stats { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  .stat-box {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 10px 6px;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--gold2);
+    display: block;
+  }
+
+  .stat-label {
+    font-size: 9.5px;
+    color: var(--muted);
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    margin-top: 3px;
+    line-height: 1.3;
+  }
+
+  /* Image upload */
+  .file-pick-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .file-pick-btn {
+    padding: 9px 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--muted2);
+    font-family: 'Sora', sans-serif;
+    font-size: 12.5px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+
+  .file-pick-btn:hover { border-color: rgba(245,158,11,0.3); color: var(--gold2); }
+
+  .file-name {
+    font-size: 12px;
+    color: var(--muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+  }
+
+  input[type="file"] { display: none; }
+
+  /* Upload progress bar */
+  .upload-progress-wrap {
+    margin-top: 8px;
+    display: none;
+  }
+
+  .upload-progress-wrap.active { display: block; }
+
+  .upload-progress-bar {
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 4px;
+  }
+
+  .upload-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green), #34d399);
+    border-radius: 4px;
+    transition: width 0.2s ease;
+    width: 0%;
+  }
+
+  .upload-progress-label {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* Preview thumbnail */
+  .img-preview {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 1px solid var(--border);
+    display: none;
+    margin-top: 8px;
+  }
+
+  .img-preview.show { display: block; }
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">L</div>
+    <span class="logo-text">Locify</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <span class="biz-badge">Business</span>
+    <button class="btn-logout hidden" id="logoutBtn" onclick="doLogout()">Logout</button>
+  </div>
+</header>
+
+<!-- LOGIN / SIGNUP -->
+<div id="loginBox">
+  <div class="login-card">
+    <div class="login-icon">🏪</div>
+    <div class="login-title">Business Portal</div>
+    <div class="login-sub" style="margin-bottom:20px">Manage your shop on Locify</div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabLogin"    onclick="switchAuthTab('login')">Sign In</button>
+      <button class="auth-tab"        id="tabRegister" onclick="switchAuthTab('register')">Register</button>
+    </div>
+
+    <!-- SIGN IN -->
+    <div class="auth-section active" id="sectionLogin">
+      <div class="field-wrap">
+        <div class="field-label">Email</div>
+        <input id="bemail" type="email" placeholder="you@business.com" autocomplete="email">
+      </div>
+      <div class="field-wrap">
+        <div class="field-label">Password</div>
+        <input id="bpass" type="password" placeholder="Your password">
+      </div>
+      <button class="btn-primary" onclick="doLogin()">Sign In →</button>
+    </div>
+
+    <!-- REGISTER -->
+    <div class="auth-section" id="sectionRegister">
+      <div class="field-wrap">
+        <div class="field-label">Shop Name</div>
+        <input id="regShopName" placeholder="e.g. Fresh Mart">
+      </div>
+      <div class="field-wrap">
+        <div class="field-label">Category</div>
+        <input id="regCategory" placeholder="store / restaurant / gym">
+      </div>
+      <div class="field-wrap">
+        <div class="field-label">Phone Number</div>
+        <input id="regPhone" type="tel" placeholder="e.g. +91 98765 43210">
+      </div>
+      <div class="field-wrap">
+        <div class="field-label">WhatsApp Number (optional)</div>
+        <input id="regWhatsapp" type="tel" placeholder="e.g. +91 98765 43210">
+      </div>
+      <div class="field-wrap">
+        <div class="field-label">Address</div>
+        <input id="regAddress" placeholder="e.g. 12 MG Road, Guwahati">
+      </div>
+      <div class="field-wrap">
+        <div class="field-label">Email</div>
+        <input id="regEmail" type="email" placeholder="you@business.com">
+      </div>
+      <div class="field-wrap">
+        <div class="field-label">Password</div>
+        <input id="regPass" type="password" placeholder="Min 6 characters">
+      </div>
+      <button class="btn-primary" onclick="doRegister()">Create Account →</button>
+      <div class="pending-notice" id="pendingNotice" style="display:none">
+        ✅ Account created! Your shop is now live on Locify.<br>Signing you in…
+      </div>
+    </div>
+
+    <div class="auth-err" id="authErr"></div>
+  </div>
+</div>
+
+<!-- NO SHOP ASSIGNED -->
+<div id="noShopBox" class="hidden">
+  <div class="big-icon">🔍</div>
+  <h2>No shop linked yet</h2>
+  <p>Your account isn't linked to a shop.<br>Contact the Locify admin to get your shop assigned.</p>
+</div>
+
+<!-- DASHBOARD -->
+<div id="panel" class="hidden">
+
+  <div class="section-title">Your Shop</div>
+  <div class="shop-info-card">
+    <img class="shop-avatar" id="bizShopImg" src="">
+    <div>
+      <div class="shop-info-name" id="bizShopName">—</div>
+      <div class="shop-info-meta" id="bizShopMeta">—</div>
+    </div>
+  </div>
+
+  <!-- Analytics -->
+  <div class="section-title">Your Analytics</div>
+  <div id="myAnalytics" style="padding:4px 0">
+    <div style="font-size:13px;color:var(--muted)">Loading…</div>
+  </div>
+
+  <!-- Edit shop info -->
+  <div class="section-title">Update Shop Info</div>
+  <div class="form-card">
+    <div class="field-wrap">
+      <div class="field-label">Phone Number</div>
+      <input id="ephone" placeholder="e.g. +91 98765 43210">
+    </div>
+    <div class="field-wrap">
+      <div class="field-label">WhatsApp (optional)</div>
+      <input id="ewhatsapp" placeholder="e.g. +91 98765 43210">
+    </div>
+    <div class="field-wrap">
+      <div class="field-label">Address</div>
+      <input id="eaddress" placeholder="e.g. 12 MG Road, Guwahati">
+    </div>
+
+    <!-- Shop Image Upload -->
+    <div class="field-wrap">
+      <div class="field-label">Shop Image</div>
+      <div class="file-pick-row">
+        <button class="file-pick-btn" onclick="document.getElementById('eimageFile').click()">
+          📷 Choose from Gallery
+        </button>
+        <span class="file-name" id="eimageFileName">No file chosen</span>
+      </div>
+      <input type="file" id="eimageFile" accept="image/*" onchange="onShopFileChange(this)">
+
+      <!-- Upload progress -->
+      <div class="upload-progress-wrap" id="shopUploadProgress">
+        <div class="upload-progress-bar">
+          <div class="upload-progress-fill" id="shopUploadFill"></div>
+        </div>
+        <div class="upload-progress-label" id="shopUploadLabel">Uploading…</div>
+      </div>
+
+      <!-- Preview -->
+      <img class="img-preview" id="shopImgPreview" alt="Preview">
+
+      <div style="margin-top:8px">
+        <input id="eimage" placeholder="Or paste image URL instead…">
+      </div>
+    </div>
+
+    <button class="btn-gold" id="updateShopBtn" onclick="updateShop()">Save Shop Info</button>
+  </div>
+
+  <!-- Add product -->
+  <div class="section-title">Add Product</div>
+  <div class="form-card">
+    <div class="field-wrap">
+      <div class="field-label">Product Name</div>
+      <input id="pname" placeholder="e.g. Basmati Rice 1kg">
+    </div>
+    <div class="field-wrap">
+      <div class="field-label">Price (₹)</div>
+      <input id="pprice" placeholder="e.g. 120">
+    </div>
+
+    <!-- Product image upload -->
+    <div class="field-wrap">
+      <div class="field-label">Product Image</div>
+      <div class="file-pick-row">
+        <button class="file-pick-btn" onclick="document.getElementById('pimageFile').click()">
+          📷 Choose from Gallery
+        </button>
+        <span class="file-name" id="pimageFileName">No file chosen</span>
+      </div>
+      <input type="file" id="pimageFile" accept="image/*" onchange="onProductFileChange(this)">
+
+      <!-- Upload progress -->
+      <div class="upload-progress-wrap" id="prodUploadProgress">
+        <div class="upload-progress-bar">
+          <div class="upload-progress-fill" id="prodUploadFill"></div>
+        </div>
+        <div class="upload-progress-label" id="prodUploadLabel">Uploading…</div>
+      </div>
+
+      <!-- Preview -->
+      <img class="img-preview" id="prodImgPreview" alt="Preview">
+
+      <div style="margin-top:8px">
+        <input id="pimg" placeholder="Or paste image URL instead…">
+      </div>
+    </div>
+
+    <div class="field-wrap">
+      <div class="field-label">Category</div>
+      <input id="pcat" placeholder="food / grocery / essential">
+    </div>
+    <button class="btn-green" onclick="addProduct()">+ Add Product</button>
+  </div>
+
+  <!-- My products -->
+  <div class="section-title">
+    My Products
+    <span class="count-badge" id="productCount">0</span>
+  </div>
+  <div id="products"></div>
+
+</div>
+
+<div class="toast" id="to

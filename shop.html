@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shop — Locify</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #080c14;
+    --bg2: #0d1424;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: rgba(255,255,255,0.06);
+    --gold: #f59e0b;
+    --gold2: #fbbf24;
+    --gold-glow: rgba(245,158,11,0.15);
+    --green: #10b981;
+    --text: #f1f5f9;
+    --muted: #64748b;
+    --muted2: #94a3b8;
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(8,12,20,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .back-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.2s;
+    text-decoration: none;
+    color: var(--text);
+    flex-shrink: 0;
+  }
+
+  .back-btn:hover {
+    border-color: rgba(245,158,11,0.3);
+    background: var(--gold-glow);
+  }
+
+  .top-bar-title {
+    font-size: 16px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: linear-gradient(135deg, #fff 60%, var(--gold2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .banner-wrap {
+    position: relative;
+    margin: 16px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  .banner-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .banner-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 24px 20px 18px;
+    background: linear-gradient(to top, rgba(8,12,20,0.95) 0%, transparent 100%);
+  }
+
+  .shop-name-hero {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+
+  .shop-cat-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    background: rgba(245,158,11,0.2);
+    border: 1px solid rgba(245,158,11,0.35);
+    border-radius: 20px;
+    font-size: 11.5px;
+    color: var(--gold2);
+    font-weight: 500;
+    text-transform: capitalize;
+    letter-spacing: 0.3px;
+  }
+
+  /* Contact row under banner */
+  .contact-row {
+    display: flex;
+    gap: 8px;
+    padding: 0 16px 4px;
+  }
+
+  .contact-btn {
+    flex: 1;
+    padding: 10px 8px;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Sora', sans-serif;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s;
+  }
+
+  .contact-btn.call {
+    background: linear-gradient(135deg, var(--green), #059669);
+    color: white;
+    box-shadow: 0 4px 14px rgba(16,185,129,0.25);
+  }
+
+  .contact-btn.whatsapp {
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    color: white;
+    box-shadow: 0 4px 14px rgba(37,211,102,0.2);
+  }
+
+  .contact-btn:active { transform: scale(0.97); }
+
+  .search-wrap { padding: 12px 16px 14px; }
+
+  .search-inner { position: relative; }
+
+  .search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 15px;
+    pointer-events: none;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 13px 16px 13px 44px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: 'Sora', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.25s ease;
+  }
+
+  .search-input:focus {
+    border-color: rgba(245,158,11,0.4);
+    background: var(--surface2);
+    box-shadow: 0 0 0 3px rgba(245,158,11,0.08);
+  }
+
+  .search-input::placeholder { color: var(--muted); }
+
+  .section-label {
+    padding: 4px 16px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 0 16px 80px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    border-color: rgba(245,158,11,0.2);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-img {
+    width: 100%;
+    height: 115px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .card-body { padding: 11px; }
+
+  .card-name {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--text);
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .card-price {
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    color: var(--gold2);
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  /* Action buttons */
+  .action-row {
+    display: flex;
+    gap: 5px;
+  }
+
+  .call-btn {
+    flex: 1;
+    padding: 8px 4px;
+    border: none;
+    border-radius: 9px;
+    background: linear-gradient(135deg, var(--green), #059669);
+    color: white;
+    font-family: 'Sora', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    box-shadow: 0 4px 14px rgba(16,185,129,0.25);
+  }
+
+  .call-btn:active { transform: scale(0.97); }
+
+  .wa-btn {
+    flex: 1;
+    padding: 8px 4px;
+    border: none;
+    border-radius: 9px;
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    color: white;
+    font-family: 'Sora', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    box-shadow: 0 4px 14px rgba(37,211,102,0.2);
+  }
+
+  .wa-btn:active { transform: scale(0.97); }
+
+  .call-btn-full {
+    width: 100%;
+    padding: 9px;
+    border: none;
+    border-radius: 9px;
+    background: linear-gradient(135deg, var(--green), #059669);
+    color: white;
+    font-family: 'Sora', sans-serif;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    box-shadow: 0 4px 14px rgba(16,185,129,0.25);
+  }
+
+  .call-btn-full:active { transform: scale(0.97); }
+
+  .empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+
+  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+
+  .loading {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px;
+    gap: 8px;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    background: var(--gold);
+    border-radius: 50%;
+    animation: pulse 1.2s ease infinite;
+  }
+
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes pulse {
+    0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+    40% { opacity: 1; transform: scale(1); }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="top-bar">
+  <a class="back-btn" href="index.html">←</a>
+  <div class="top-bar-title" id="shopTitle">Shop</div>
+</div>
+
+<div class="banner-wrap">
+  <img class="banner-img" id="shopImage"
+    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='300' viewBox='0 0 600 300'%3E%3Crect width='600' height='300' fill='%23111827'/%3E%3C/svg%3E"
+    alt="Shop Banner">
+  <div class="banner-overlay">
+    <div class="shop-name-hero" id="shopNameHero">—</div>
+    <span class="shop-cat-badge" id="shopCategory">—</span>
+    <div id="shopAddress" style="margin-top:6px;font-size:12px;color:rgba(255,255,255,0.6);display:none">
+      📍 <span id="shopAddressText"></span>
+    </div>
+  </div>
+</div>
+
+<!-- Contact buttons shown below banner once shop loads -->
+<div class="contact-row" id="contactRow" style="display:none"></div>
+
+<div class="search-wrap">
+  <div class="search-inner">
+    <span class="search-icon">🔍</span>
+    <input
+      class="search-input"
+      type="text"
+      id="searchInput"
+      placeholder="Search products in this shop…"
+      oninput="renderProducts()">
+  </div>
+</div>
+
+<div class="section-label">Products</div>
+
+<div class="grid" id="productsGrid">
+  <div class="loading">
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+import {
+  getFirestore, collection, getDocs,
+  doc, setDoc, updateDoc, increment
+} from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA7ttq0TIGjM6BPtVsLNwBUN_ITuijI0nk",
+  authDomain: "locify-bbd17.firebaseapp.com",
+  projectId: "locify-bbd17"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+const params     = new URLSearchParams(location.search);
+const shopName   = params.get("shop");
+const shopIdParam = params.get("sid") || "";
+
+let allProducts  = [];
+let shopPhone    = "";
+let shopWhatsapp = "";
+let myShopId     = shopIdParam;
+
+const DEFAULT_IMG = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200' viewBox='0 0 300 200'%3E%3Crect width='300' height='200' fill='%23111827'/%3E%3Crect x='110' y='60' width='80' height='80' rx='14' fill='%23f59e0b'/%3E%3Ctext x='150' y='115' font-family='monospace' font-size='36' font-weight='bold' fill='%23000' text-anchor='middle'%3EL%3C/text%3E%3C/svg%3E`;
+
+function fallback(img) { return img || DEFAULT_IMG; }
+
+async function trackEvent(shopId, field) {
+  if (!shopId) return;
+  const ref = doc(db, "analytics", shopId);
+  try {
+    await updateDoc(ref, { [field]: increment(1) });
+  } catch {
+    await setDoc(ref, {
+      callClicks: 0, whatsappClicks: 0,
+      shopViews: 0, productViews: 0, productClicks: 0,
+      [field]: 1
+    });
+  }
+}
+
+async function load() {
+  document.getElementById("shopTitle").textContent   = shopName || "Shop";
+  document.getElementById("shopNameHero").textContent = shopName || "Shop";
+
+  const sSnap = await getDocs(collection(db, "shops"));
+  sSnap.forEach(docSnap => {
+    const s = docSnap.data();
+    if (s.name === shopName) {
+      myShopId = docSnap.id;
+      document.getElementById("shopCategory").textContent = s.category || "shop";
+      document.getElementById("shopImage").src = fallback(s.image);
+      shopPhone    = s.phone    || "";
+      shopWhatsapp = s.whatsapp || "";
+
+      if (s.address) {
+        document.getElementById("shopAddressText").textContent = s.address;
+        document.getElementById("shopAddress").style.display = "block";
+      }
+
+      // Build contact row
+      buildContactRow();
+    }
+  });
+
+  trackEvent(myShopId, 'shopViews');
+
+  const pSnap = await getDocs(collection(db, "products"));
+  allProducts  = [];
+  pSnap.forEach(docSnap => {
+    const p = docSnap.data();
+    if (p.shop === shopName) allProducts.push(p);
+  });
+
+  renderProducts();
+}
+
+function buildContactRow() {
+  const row = document.getElementById("contactRow");
+  row.innerHTML = "";
+  row.style.display = "flex";
+
+  if (shopPhone) {
+    const btn = document.createElement('button');
+    btn.className = 'contact-btn call';
+    btn.innerHTML = '📞 Call';
+    btn.onclick = () => { trackEvent(myShopId, 'callClicks'); location.href = "tel:" + shopPhone; };
+    row.appendChild(btn);
+  }
+
+  if (shopWhatsapp) {
+    const btn = document.createElement('button');
+    btn.className = 'contact-btn whatsapp';
+    btn.innerHTML = '💬 WhatsApp';
+    btn.onclick = () => {
+      trackEvent(myShopId, 'whatsappClicks');
+      const clean = shopWhatsapp.replace(/\D/g, '');
+      window.open("https://wa.me/" + clean, "_blank");
+    };
+    row.appendChild(btn);
+  }
+
+  if (!shopPhone && !shopWhatsapp) row.style.display = "none";
+}
+
+window.renderProducts = () => {
+  const q    = document.getElementById("searchInput").value.toLowerCase();
+  const grid = document.getElementById("productsGrid");
+  grid.innerHTML = "";
+
+  const filtered = allProducts.filter(p => p.name?.toLowerCase().includes(q));
+
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="empty"><div class="empty-icon">📦</div><div style="font-size:14px;color:var(--muted)">No products found</div></div>`;
+    return;
+  }
+
+  trackEvent(myShopId, 'productViews');
+
+  filtered.forEach((p, i) => {
+    const phone    = shopPhone    || p.phone    || '';
+    const whatsapp = shopWhatsapp || p.whatsapp || '';
+
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.animationDelay = (i * 0.05) + 's';
+    card.addEventListener('click', () => trackEvent(myShopId, 'productClicks'));
+
+    const actionBtns = whatsapp
+      ? `<div class="action-row">
+           <button class="call-btn" onclick="event.stopPropagation();doCall('${phone}')">📞 Call</button>
+           <button class="wa-btn"   onclick="event.stopPropagation();doWA('${whatsapp}')">💬 WA</button>
+         </div>`
+      : `<button class="call-btn-full" onclick="event.stopPropagation();doCall('${phone}')">📞 Call</button>`;
+
+    card.innerHTML = `
+      <img class="card-img" src="${fallback(p.image)}" alt="${p.name}" onerror="this.src='${DEFAULT_IMG}'">
+      <div class="card-body">
+        <div class="card-name">${p.name || '—'}</div>
+        <div class="card-price">₹${p.price || '0'}</div>
+        ${actionBtns}
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+};
+
+window.doCall = (num) => {
+  trackEvent(myShopId, 'callClicks');
+  location.href = "tel:" + num;
+};
+
+window.doWA = (num) => {
+  trackEvent(myShopId, 'whatsappClicks');
+  const clean = num.replace(/\D/g, '');
+  window.open("https://wa.me/" + clean, "_blank");
+};
+
+load();
+
+</script>
+</body>
+</html>
