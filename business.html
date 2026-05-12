@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business Dashboard — Locify</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #080c14;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: rgba(255,255,255,0.07);
+    --gold: #f59e0b;
+    --gold2: #fbbf24;
+    --gold-glow: rgba(245,158,11,0.12);
+    --red: #ef4444;
+    --red-glow: rgba(239,68,68,0.12);
+    --green: #10b981;
+    --text: #f1f5f9;
+    --muted: #64748b;
+    --muted2: #94a3b8;
+    --radius: 14px;
+    --radius-sm: 9px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 60px;
+  }
+
+  header {
+    background: rgba(8,12,20,0.9);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    height: 62px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .logo { display: flex; align-items: center; gap: 10px; }
+
+  .logo-mark {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--gold), #d97706);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 14px; font-weight: 700; color: #000;
+  }
+
+  .logo-text {
+    font-size: 18px; font-weight: 700;
+    background: linear-gradient(135deg, #fff 60%, var(--gold2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+
+  .biz-badge {
+    font-size: 10px; font-weight: 600; color: var(--green);
+    background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3);
+    padding: 3px 10px; border-radius: 20px; letter-spacing: 1px; text-transform: uppercase;
+  }
+
+  .btn-logout {
+    padding: 6px 14px; background: transparent; border: 1px solid var(--border);
+    border-radius: 8px; color: var(--muted2); font-family: 'Sora', sans-serif;
+    font-size: 12px; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-logout:hover { border-color: rgba(239,68,68,0.4); color: var(--red); }
+
+  .hidden { display: none !important; }
+
+  /* ── LOGIN ── */
+  #loginBox {
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding: 24px;
+  }
+
+  .login-card {
+    width: 100%; max-width: 380px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 22px;
+    padding: 36px 28px; box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+  }
+
+  .login-icon {
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, var(--green), #059669);
+    border-radius: 16px; display: flex; align-items: center; justify-content: center;
+    font-size: 24px; margin: 0 auto 20px;
+    box-shadow: 0 8px 24px rgba(16,185,129,0.25);
+  }
+
+  .login-title { text-align: center; font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .login-sub   { text-align: center; font-size: 13px; color: var(--muted); margin-bottom: 28px; }
+
+  .field-label {
+    font-size: 11.5px; font-weight: 600; color: var(--muted2);
+    letter-spacing: 0.5px; margin-bottom: 6px; text-transform: uppercase;
+  }
+  .field-wrap { margin-bottom: 16px; }
+
+  input {
+    width: 100%; padding: 13px 16px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); color: var(--text);
+    font-family: 'Sora', sans-serif; font-size: 14px; outline: none; transition: all 0.25s;
+  }
+  input:focus { border-color: rgba(16,185,129,0.4); box-shadow: 0 0 0 3px rgba(16,185,129,0.08); }
+  input::placeholder { color: var(--muted); }
+
+  .btn-primary {
+    width: 100%; padding: 13px;
+    background: linear-gradient(135deg, var(--green), #059669);
+    border: none; border-radius: var(--radius-sm); color: #fff;
+    font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700;
+    cursor: pointer; margin-top: 8px; transition: all 0.2s;
+    box-shadow: 0 6px 20px rgba(16,185,129,0.2);
+  }
+  .btn-primary:hover { transform: translateY(-1px); }
+  .btn-primary:active { transform: scale(0.98); }
+
+  .auth-err { margin-top: 12px; font-size: 13px; color: var(--red); text-align: center; min-height: 20px; }
+
+  .auth-tabs {
+    display: flex; background: var(--surface2);
+    border-radius: 10px; padding: 4px; margin-bottom: 24px; gap: 4px;
+  }
+  .auth-tab {
+    flex: 1; padding: 9px; border: none; border-radius: 7px;
+    background: transparent; color: var(--muted2);
+    font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s;
+  }
+  .auth-tab.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,0.3); }
+
+  .auth-section { display: none; }
+  .auth-section.active { display: block; }
+
+  /* ── PENDING / REJECTED SCREEN ── */
+  #pendingBox {
+    min-height: 80vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding: 32px 24px; text-align: center;
+  }
+
+  .pending-icon {
+    width: 72px; height: 72px; border-radius: 20px;
+    background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px; margin: 0 auto 20px;
+  }
+
+  .pending-title { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+  .pending-sub   { font-size: 13px; color: var(--muted); line-height: 1.7; max-width: 280px; }
+
+  .pending-status-badge {
+    margin-top: 20px; padding: 8px 20px; border-radius: 30px;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.5px; display: inline-block;
+  }
+  .pending-status-badge.pending  { background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3); color: var(--gold2); }
+  .pending-status-badge.rejected { background: rgba(239,68,68,0.12);  border: 1px solid rgba(239,68,68,0.3);  color: var(--red); }
+
+  /* ── NO SHOP ── */
+  #noShopBox { padding: 60px 24px; text-align: center; color: var(--muted); }
+  #noShopBox .big-icon { font-size: 48px; margin-bottom: 16px; }
+  #noShopBox h2 { font-size: 18px; color: var(--text); margin-bottom: 8px; }
+  #noShopBox p  { font-size: 13px; line-height: 1.6; }
+
+  /* ── DASHBOARD ── */
+  #panel { padding: 20px 16px; max-width: 600px; margin: 0 auto; }
+
+  .shop-info-card {
+    background: var(--surface); border: 1px solid rgba(16,185,129,0.2);
+    border-radius: var(--radius); padding: 18px 20px; margin-bottom: 6px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .shop-avatar { width: 52px; height: 52px; border-radius: 12px; object-fit: cover; flex-shrink: 0; background: var(--surface2); }
+  .shop-info-name { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .shop-info-meta { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+  .section-title {
+    font-size: 13px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--gold2); display: flex; align-items: center; gap: 8px; margin: 28px 0 16px;
+  }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .form-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 6px; }
+
+  .btn-green {
+    width: 100%; padding: 13px;
+    background: linear-gradient(135deg, var(--green), #059669);
+    border: none; border-radius: var(--radius-sm); color: white;
+    font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 600;
+    cursor: pointer; margin-top: 4px; transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(16,185,129,0.2);
+  }
+  .btn-green:hover { transform: translateY(-1px); }
+  .btn-green:active { transform: scale(0.98); }
+
+  .btn-gold {
+    width: 100%; padding: 13px;
+    background: linear-gradient(135deg, var(--gold), #d97706);
+    border: none; border-radius: var(--radius-sm); color: #000;
+    font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700;
+    cursor: pointer; margin-top: 4px; transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(245,158,11,0.2);
+  }
+  .btn-gold:hover { transform: translateY(-1px); }
+  .btn-gold:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  .item-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px; margin-bottom: 8px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    animation: fadeUp 0.3s ease both;
+  }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+  .item-info { flex: 1; min-width: 0; }
+  .item-name { font-size: 14px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px; }
+  .item-meta { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .item-badge { padding: 2px 8px; background: var(--gold-glow); border: 1px solid rgba(245,158,11,0.2); border-radius: 10px; font-size: 10.5px; color: var(--gold2); font-weight: 500; text-transform: capitalize; }
+  .price-tag  { font-family: 'Space Mono', monospace; color: var(--gold2); font-size: 12.5px; font-weight: 700; }
+
+  .btn-del {
+    flex-shrink: 0; padding: 7px 14px; background: var(--red-glow);
+    border: 1px solid rgba(239,68,68,0.2); border-radius: 8px; color: var(--red);
+    font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-del:hover { background: rgba(239,68,68,0.2); border-color: rgba(239,68,68,0.4); }
+
+  .count-badge {
+    margin-left: 8px; font-size: 11px; padding: 2px 9px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 12px; color: var(--muted2);
+    font-family: 'Space Mono', monospace; font-weight: 400; letter-spacing: 0; text-transform: none;
+  }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--surface2); border: 1px solid rgba(16,185,129,0.3); color: #6ee7b7;
+    padding: 12px 24px; border-radius: 30px; font-size: 13px; font-weight: 500;
+    z-index: 999; transition: transform 0.3s ease;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4); white-space: nowrap;
+  }
+  .toast.show     { transform: translateX(-50%) translateY(0); }
+  .toast.approved { border-color: rgba(16,185,129,0.5); color: #6ee7b7; }
+  .toast.rejected { border-color: rgba(239,68,68,0.5);  color: #fca5a5; }
+
+  /* ── ANALYTICS ── */
+  .analytics-stats { display: grid; grid-template-columns: repeat(5,1fr); gap: 6px; }
+  @media (max-width:480px) { .analytics-stats { grid-template-columns: repeat(3,1fr); } }
+  .stat-box   { background: var(--surface2); border-radius: 10px; padding: 10px 6px; text-align: center; }
+  .stat-num   { font-family: 'Space Mono', monospace; font-size: 18px; font-weight: 700; color: var(--gold2); display: block; }
+  .stat-label { font-size: 9.5px; color: var(--muted); letter-spacing: 0.4px; text-transform: uppercase; margin-top: 3px; line-height: 1.3; }
+
+  /* ── IMAGE UPLOAD ── */
+  .file-pick-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .file-pick-btn {
+    padding: 9px 14px; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); color: var(--muted2);
+    font-family: 'Sora', sans-serif; font-size: 12.5px; cursor: pointer; white-space: nowrap; transition: all 0.2s;
+  }
+  .file-pick-btn:hover { border-color: rgba(245,158,11,0.3); color: var(--gold2); }
+  .file-name { font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+  input[type="file"] { display: none; }
+
+  .upload-progress-wrap { margin-top: 8px; display: none; }
+  .upload-progress-wrap.active { display: block; }
+  .upload-progress-bar  { height: 4px; background: var(--surface2); border-radius: 4px; overflow: hidden; margin-bottom: 4px; }
+  .upload-progress-fill { height: 100%; background: linear-gradient(90deg, var(--green), #34d399); border-radius: 4px; transition: width 0.2s ease; width: 0%; }
+  .upload-progress-label { font-size: 11px; color: var(--muted); }
+
+  .img-preview { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border); display: none; margin-top: 8px; }
+  .img-preview.show { display: block; }
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">L</div>
+    <span class="logo-text">Locify</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <a id="bizCreditsWidget" href="referral.html" style="display:none;font-family:'Space Mono',monospace;font-size:12px;color:#fbbf24;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);padding:4px 10px;border-radius:20px;text-decoration:none;">₹0</a>
+    <span class="biz-badge">Business</span>
+    <button class="btn-logout hidden" id="logoutBtn" onclick="doLogout()">Logout</button>
+  </div>
+</header>
+
+<!-- LOGIN / SIGNUP -->
+<div id="loginBox">
+  <div class="login-card">
+    <div class="login-icon">🏪</div>
+    <div class="login-title">Business Portal</div>
+    <div class="login-sub" style="margin-bottom:20px">Manage your shop on Locify</div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabLogin"    onclick="switchAuthTab('login')">Sign In</button>
+      <button class="auth-tab"        id="tabRegister" onclick="switchAuthTab('register')">Register</button>
+    </div>
+
+    <!-- SIGN IN -->
+    <div class="auth-section active" id="sectionLogin">
+      <div class="field-wrap">
+        <div class="field-label">Email</div>
+        <input id="bemail" type="email" placeholder="you@business.com" autocomplete="email">
+      </div>
+      <div class="field-wrap">
+        <div class="field-label">Password</div>
+        <input id="bpass" type="password" placeholder="Your password">
+      </div>
+      <button class="btn-primary" onclick="doLogin()">Sign In →</button>
+    </div>
+
+    <!-- REGISTER -->
+    <div class="auth-section" id="sectionRegister">
+      <div class="field-wrap">
+        <div class="field-label">Shop Name</div>
+        <input id="regShopName" placeholder="e.g. Fresh Mart">
+      </div>
+      <div class="field-wrap">
+        <div class="field-label">Category</div>
+        <input id="regCategory" placeholder="store / restaurant / gym">
+      </div>
+      <div class="field-wrap">
+        <div class="field-label">Phone Number</div>
+        <input id="regPhone" type="tel" placeholder="e.g. +91 98765 43210">
+      </div>
+      <div class="field-wrap">
+        <div class="field-label">WhatsApp (optional)</div>
+        <input id="regWhatsapp" type="tel" placeholder="e.g. +91 98765 43210">
+      </div>
+      <div class="field-wrap">
+        <div class="field-label">Address</div>
+        <input id="regAddress" placeholder="e.g. 12 MG Road, Guwahati">
+      </div>
+      <div class="field-wrap">
+        <div class="field-label">Email</div>
+        <input id="regEmail" type="email" placeholder="you@business.com">
+      </div>
+      <div class="field-wrap">
+        <div class="field-label">Password</div>
+        <input id="regPass" type="password" placeholder="Min 6 characters">
+      </div>
+      <div class="field-wrap">
+        <div class="field-label">Referral Code (optional)</div>
+        <input id="regRefCode" placeholder="e.g. LOCABC123">
+      </div>
+      <button class="btn-primary" onclick="doRegister()">Create Account →</button>
+    </div>
+
+    <div class="auth-err" id="authErr"></div>
+  </div>
+</div>
+
+<!-- PENDING / REJECTED (shown when approved !== true) -->
+<div id="pendingBox" class="hidden">
+  <div class="pending-icon" id="pendingIcon">⏳</div>
+  <div class="pending-title" id="pendingTitle">Pending Approval</div>
+  <div class="pending-sub"   id="pendingSub">
+    Your shop has been registered and is awaiting admin approval.<br>
+    You'll be notified here once it's reviewed.
+  </div>
+  <div class="pending-status-badge pending" id="pendingBadge">⏳ Pending Review</div>
+</div>
+
+<!-- NO SHOP ASSIGNED -->
+<div id="noShopBox" class="hidden">
+  <div class="big-icon">🔍</div>
+  <h2>No shop linked yet</h2>
+  <p>Your account isn't linked to a shop.<br>Contact the Locify admin to get your shop assigned.</p>
+</div>
+
+<!-- DASHBOARD (only when approved === true) -->
+<div id="panel" class="hidden">
+
+  <div class="section-title">Your Shop</div>
+  <div class="shop-info-card">
+    <img class="shop-avatar" id="bizShopImg" src="">
+    <div>
+      <div class="shop-info-name" id="bizShopName">—</div>
+      <div class="shop-info-meta" id="bizShopMeta">—</div>
+    </div>
+  </div>
+
+  <div class="section-title">Your Analytics</div>
+  <div id="myAnalytics" style="padding:4px 0">
+    <div style="font-size:13px;color:var(--muted)">Loading…</div>
+  </div>
+
+  <div class="section-title">Update Shop Info</div>
+  <div class="form-card">
+    <div class="field-wrap">
+      <div class="field-label">Phone Number</div>
+      <input id="ephone" placeholder="e.g. +91 98765 43210">
+    </div>
+    <div class="field-wrap">
+      <div class="field-label">WhatsApp (optional)</div>
+      <input id="ewhatsapp" placeholder="e.g. +91 98765 43210">
+    </div>
+    <div class="field-wrap">
+      <div class="field-label">Address</div>
+      <input id="eaddress" placeholder="e.g. 12 MG Road, Guwahati">
+    </div>
+    <div class="field-wrap">
+      <div class="field-label">Shop Image</div>
+      <div class="file-pick-row">
+        <button class="file-pick-btn" onclick="document.getElementById('eimageFile').click()">📷 Choose from Gallery</button>
+        <span class="file-name" id="eimageFileName">No file chosen</span>
+      </div>
+      <input type="file" id="eimageFile" accept="image/*" onchange="onShopFileChange(this)">
+      <div class="upload-progress-wrap" id="shopUploadProgress">
+        <div class="upload-progress-bar"><div class="upload-progress-fill" id="shopUploadFill"></div></div>
+        <div class="upload-progress-label" id="shopUploadLabel"></div>
+      </div>
+      <img class="img-preview" id="shopImgPreview" alt="Preview">
+      <div style="margin-top:8px">
+        <input id="eimage" placeholder="Or paste image URL instead…">
+      </div>
+    </div>
+    <button class="btn-gold" id="updateShopBtn" onclick="updateShop()">Save Shop Info</button>
+  </div>
+
+  <div class="section-title">Add Product</div>
+  <div class="form-card">
+    <div class="field-wrap">
+      <div class="field-label">Product Name</div>
+      <input id="pname" placeholder="e.g. Basmati Rice 1kg">
+    </div>
+    <div class="field-wrap">
+      <div class="field-label">Price (₹)</div>
+      <input id="pprice" placeholder="e.g. 120">
+    </div>
+    <div class="field-wrap">
+      <div class="field-label">Product Image</div>
+      <div class="file-pick-row">
+        <button class="file-pick-btn" onclick="document.getElementById('pimageFile').click()">📷 Choose from Gallery</button>
+        <span class="file-name" id="pimageFileName">No file chosen</span>
+      </div>
+      <input type="file" id="pimageFile" accept="image/*" onchange="onProductFileChange(this)">
+      <div class="upload-progress-wrap" id="prodUploadProgress">
+        <div class="upload-progress-bar"><div class="upload-progress-fill" id="prodUploadFill"></div></div>
+        <div class="upload-progress-label" id="prodUploadLabel"></div>
+      </div>
+      <img class="img-preview" id="prodImgPreview" alt="Preview">
+      <div style="margin-top:8px">
+        <input id="pimg" placeholder="Or paste image URL instead…">
+      </div>
+    </div>
+    <div class="field-wrap">
+      <div class="field-label">Category</div>
+      <input id="pcat" placeholder="food / grocery / essential">
+    </div>
+    <button class="btn-green" onclick="addProduct()">+ Add Product</button>
+  </div>
+
+  <div class="section-title">
+    My Products
+    <span class="count-badge" id="productCount">0</span>
+  </div>
+  <div id="products"></div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- switchAuthTab in plain script — runs before module, avoids scope error -->
+<script>
+function switchAuthTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.auth-section').forEach(function(s){ s.classList.remove('active'); });
+  var cap = tab.charAt(0).toUpperCase() + tab.slice(1);
+  var t = document.getElementById('tab' + cap);
+  var s = document.getElementById('section' + cap);
+  if (t) t.classList.add('active');
+  if (s) s.classList.add('active');
+  var e = document.getElementById('authErr');
+  if (e) e.textContent = '';
+}
+</script>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+import {
+  getFirestore, collection, addDoc, getDocs, deleteDoc,
+  doc, query, where, updateDoc, getDoc, onSnapshot
+} from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+import {
+  getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+  signOut, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA7ttq0TIGjM6BPtVsLNwBUN_ITuijI0nk",
+  authDomain: "locify-bbd17.firebaseapp.com",
+  projectId: "locify-bbd17"
+};
+
+const app  = initializeApp(firebaseConfig);
+const db   = getFirestore(app);
+const auth = getAuth(app);
+
+// ── Cloudinary (free plan, unsigned upload preset) ───────
+const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/defl5crcc/image/upload";
+const CLOUDINARY_PRESET = "locify";
+
+const DEFAULT_IMG = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200' viewBox='0 0 300 200'%3E%3Crect width='300' height='200' fill='%23111827'/%3E%3Crect x='110' y='60' width='80' height='80' rx='14' fill='%23f59e0b'/%3E%3Ctext x='150' y='115' font-family='monospace' font-size='36' font-weight='bold' fill='%23000' text-anchor='middle'%3EL%3C/text%3E%3C/svg%3E`;
+
+let myShopId            = null;
+let myShopName          = null;
+let myShopData          = null;
+let shopUnsubscribe     = null;   // live Firestore listener for approval
+let pendingShopImageURL    = null;
+let pendingProductImageURL = null;
+
+// ── TOAST ────────────────────────────────────────────────
+function showToast(msg, type) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className   = "toast show" + (type ? " " + type : "");
+  setTimeout(() => t.classList.remove("show"), 3500);
+}
+
+// ── HIDE ALL CONTENT SCREENS ─────────────────────────────
+function hideAll() {
+  ["panel", "pendingBox", "noShopBox"].forEach(id =>
+    document.getElementById(id).classList.add("hidden")
+  );
+}
+
+// ── AUTH STATE ───────────────────────────────────────────
+onAuthStateChanged(auth, async (user) => {
+  if (shopUnsubscribe) { shopUnsubscribe(); shopUnsubscribe = null; }
+
+  if (user) {
+    document.getElementById("loginBox").classList.add("hidden");
+    document.getElementById("logoutBtn").classList.remove("hidden");
+    await findShop(user.uid);
+  } else {
+    hideAll();
+    document.getElementById("loginBox").classList.remove("hidden");
+    document.getElementById("logoutBtn").classList.add("hidden");
+    myShopId = null; myShopName = null; myShopData = null;
+  }
+});
+
+// ── FIND SHOP + LIVE LISTENER ────────────────────────────
+async function findShop(uid) {
+  const q    = query(collection(db, "shops"), where("uid", "==", uid));
+  const snap = await getDocs(q);
+
+  if (snap.empty) {
+    hideAll();
+    document.getElementById("noShopBox").classList.remove("hidden");
+    return;
+  }
+
+  const docSnap  = snap.docs[0];
+  myShopId   = docSnap.id;
+  myShopData = docSnap.data();
+  myShopName = myShopData.name;
+
+  // Show the right screen now
+  showApprovalScreen(myShopData.approved);
+
+  // Live listener — fires when admin changes approved field
+  shopUnsubscribe = onSnapshot(doc(db, "shops", myShopId), (snap) => {
+    if (!snap.exists()) return;
+    const prevApproved = myShopData ? myShopData.approved : undefined;
+    myShopData = snap.data();
+    const newApproved  = myShopData.approved;
+
+    // Only react to actual changes (not initial fire)
+    if (prevApproved !== undefined && prevApproved !== newApproved) {
+      if (newApproved === true) {
+        showToast("🎉 Approved! Welcome to Locify.", "approved");
+      } else if (newApproved === false) {
+        showToast("❌ Your shop was rejected.", "rejected");
+      }
+      showApprovalScreen(newApproved);
+    }
+  });
+}
+
+// ── APPROVAL SCREEN ROUTER ───────────────────────────────
+function showApprovalScreen(approved) {
+  hideAll();
+
+  if (approved === true) {
+    document.getElementById("panel").classList.remove("hidden");
+    renderShopInfo();
+    loadAnalytics();
+    loadProducts();
+
+  } else if (approved === false) {
+    // Rejected
+    const box = document.getElementById("pendingBox");
+    box.classList.remove("hidden");
+    document.getElementById("pendingIcon").textContent  = "❌";
+    document.getElementById("pendingTitle").textContent = "Shop Rejected";
+    document.getElementById("pendingSub").textContent   =
+      "Unfortunately your registration was not approved. Please contact support.";
+    const badge = document.getElementById("pendingBadge");
+    badge.textContent = "❌ Rejected";
+    badge.className   = "pending-status-badge rejected";
+
+  } else {
+    // null / undefined — pending
+    const box = document.getElementById("pendingBox");
+    box.classList.remove("hidden");
+    document.getElementById("pendingIcon").textContent  = "⏳";
+    document.getElementById("pendingTitle").textContent = "Pending Approval";
+    document.getElementById("pendingSub").innerHTML     =
+      "Your shop has been registered and is awaiting admin approval.<br>You'll be notified here once it's reviewed.";
+    const badge = document.getElementById("pendingBadge");
+    badge.textContent = "⏳ Pending Review";
+    badge.className   = "pending-status-badge pending";
+  }
+}
+
+// ── SHOP INFO ────────────────────────────────────────────
+function renderShopInfo() {
+  if (!myShopData) return;
+  document.getElementById("bizShopImg").src = myShopData.image || DEFAULT_IMG;
+  document.getElementById("bizShopName").textContent = myShopData.name || "—";
+
+  const parts = [];
+  if (myShopData.category) parts.push("🏷 " + myShopData.category);
+  if (myShopData.phone)    parts.push("📞 " + myShopData.phone);
+  if (myShopData.whatsapp) parts.push("💬 " + myShopData.whatsapp);
+  if (myShopData.address)  parts.push("📍 " + myShopData.address);
+  document.getElementById("bizShopMeta").innerHTML = parts.join("<br>");
+
+  document.getElementById("ephone").value    = myShopData.phone    || "";
+  document.getElementById("ewhatsapp").value = myShopData.whatsapp || "";
+  document.getElementById("eaddress").value  = myShopData.address  || "";
+  document.getElementById("eimage").value    = "";
+}
+
+// ── ANALYTICS ────────────────────────────────────────────
+async function loadAnalytics() {
+  const el = document.getElementById("myAnalytics");
+  el.innerHTML = "<div style='font-size:13px;color:var(--muted)'>Loading…</div>";
+  try {
+    const aDoc = await getDoc(doc(db, "analytics", myShopId));
+    const a    = aDoc.exists() ? aDoc.data() : {};
+    el.innerHTML = `
+      <div class="analytics-stats">
+        <div class="stat-box"><span class="stat-num">${a.shopViews      || 0}</span><div class="stat-label">Shop Views</div></div>
+        <div class="stat-box"><span class="stat-num">${a.productViews   || 0}</span><div class="stat-label">Prod. Views</div></div>
+        <div class="stat-box"><span class="stat-num">${a.productClicks  || 0}</span><div class="stat-label">Prod. Clicks</div></div>
+        <div class="stat-box"><span class="stat-num">${a.callClicks     || 0}</span><div class="stat-label">Call Clicks</div></div>
+        <div class="stat-box"><span class="stat-num">${a.whatsappClicks || 0}</span><div class="stat-label">WA Clicks</div></div>
+      </div>`;
+  } catch {
+    el.innerHTML = "<div style='font-size:13px;color:var(--muted)'>No analytics data yet.</div>";
+  }
+}
+
+// ── CLOUDINARY UPLOAD (XHR for real progress) ────────────
+function uploadToCloudinary(file, fillEl, labelEl, progressWrap, previewEl) {
+  return new Promise((resolve, reject) => {
+    progressWrap.classList.add("active");
+    fillEl.style.width  = "0%";
+    labelEl.textContent = "Uploading…";
+
+    const fd = new FormData();
+    fd.append("file",          file);
+    fd.append("upload_preset", CLOUDINARY_PRESET);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", CLOUDINARY_URL, true);
+
+    xhr.upload.onprogress = (e) => {
+      if (!e.lengthComputable) return;
+      const pct = Math.round((e.loaded / e.total) * 100);
+      fillEl.style.width  = pct + "%";
+      labelEl.textContent = "Uploading… " + pct + "%";
+    };
+
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        const url = JSON.parse(xhr.responseText).secure_url;
+        fillEl.style.width  = "100%";
+        labelEl.textContent = "✅ Upload complete";
+        if (previewEl) { previewEl.src = url; previewEl.classList.add("show"); }
+        setTimeout(() => {
+          progressWrap.classList.remove("active");
+          labelEl.textContent = "";
+        }, 2000);
+        resolve(url);
+      } else {
+        progressWrap.classList.remove("active");
+        reject(new Error("Cloudinary error " + xhr.status));
+      }
+    };
+
+    xhr.onerror = () => {
+      progressWrap.classList.remove("active");
+      reject(new Error("Network error during upload"));
+    };
+
+    xhr.send(fd);
+  });
+}
+
+// ── SHOP IMAGE PICKER ────────────────────────────────────
+window.onShopFileChange = async (input) => {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  document.getElementById("eimageFileName").textContent = file.name;
+  document.getElementById("eimage").value = "";
+
+  const saveBtn = document.getElementById("updateShopBtn");
+  saveBtn.disabled = true;
+  try {
+    pendingShopImageURL = await uploadToCloudinary(
+      file,
+      document.getElementById("shopUploadFill"),
+      document.getElementById("shopUploadLabel"),
+      document.getElementById("shopUploadProgress"),
+      document.getElementById("shopImgPreview")
+    );
+    showToast("✅ Image ready — press Save to apply");
+  } catch (e) {
+    showToast("❌ Upload failed: " + e.message);
+    pendingShopImageURL = null;
+  } finally {
+    saveBtn.disabled = false;
+  }
+};
+
+// ── PRODUCT IMAGE PICKER ─────────────────────────────────
+window.onProductFileChange = async (input) => {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  document.getElementById("pimageFileName").textContent = file.name;
+  document.getElementById("pimg").value = "";
+  try {
+    pendingProductImageURL = await uploadToCloudinary(
+      file,
+      document.getElementById("prodUploadFill"),
+      document.getElementById("prodUploadLabel"),
+      document.getElementById("prodUploadProgress"),
+      document.getElementById("prodImgPreview")
+    );
+    showToast("✅ Image ready — press Add Product to save");
+  } catch (e) {
+    showToast("❌ Upload failed: " + e.message);
+    pendingProductImageURL = null;
+  }
+};
+
+// ── UPDATE SHOP ──────────────────────────────────────────
+window.updateShop = async () => {
+  if (!myShopId) return;
+  const imageURL =
+    pendingShopImageURL ||
+    document.getElementById("eimage").value.trim() ||
+    myShopData.image || "";
+
+  const updates = {
+    phone:    document.getElementById("ephone").value.trim(),
+    whatsapp: document.getElementById("ewhatsapp").value.trim(),
+    address:  document.getElementById("eaddress").value.trim(),
+    image:    imageURL
+  };
+
+  await updateDoc(doc(db, "shops", myShopId), updates);
+  myShopData = { ...myShopData, ...updates };
+  pendingShopImageURL = null;
+  document.getElementById("eimageFile").value           = "";
+  document.getElementById("eimageFileName").textContent = "No file chosen";
+  document.getElementById("shopImgPreview").classList.remove("show");
+  renderShopInfo();
+  showToast("✅ Shop info updated");
+};
+
+// ── ADD PRODUCT ──────────────────────────────────────────
+window.addProduct = async () => {
+  const name = document.getElementById("pname").value.trim();
+  if (!name) { showToast("⚠️ Product name required"); return; }
+
+  const imageURL =
+    pendingProductImageURL ||
+    document.getElementById("pimg").value.trim() || "";
+
+  await addDoc(collection(db, "products"), {
+    name,
+    price:    document.getElementById("pprice").value.trim(),
+    shop:     myShopName,
+    shopId:   myShopId,
+    image:    imageURL,
+    category: document.getElementById("pcat").value.trim()
+  });
+
+  ["pname","pprice","pimg","pcat"].forEach(id => document.getElementById(id).value = "");
+  pendingProductImageURL = null;
+  document.getElementById("pimageFile").value           = "";
+  document.getElementById("pimageFileName").textContent = "No file chosen";
+  document.getElementById("prodImgPreview").classList.remove("show");
+  showToast("✅ Product added");
+  loadProducts();
+};
+
+// ── LOAD PRODUCTS ────────────────────────────────────────
+async function loadProducts() {
+  const q    = query(collection(db, "products"), where("shop", "==", myShopName));
+  const snap = await getDocs(q);
+  const el   = document.getElementById("products");
+  el.innerHTML = "";
+  document.getElementById("productCount").textContent = snap.size;
+
+  if (snap.empty) {
+    el.innerHTML = "<div style='font-size:13px;color:var(--muted);padding:8px 0'>No products yet. Add one above!</div>";
+    return;
+  }
+
+  snap.forEach(d => {
+    const p = d.data();
+    const row = document.createElement("div");
+    row.className = "item-card";
+    row.innerHTML = `
+      <div class="item-info">
+        <div class="item-name">${p.name || "—"}</div>
+        <div class="item-meta">
+          <span class="price-tag">₹${p.price || "0"}</span>
+          <span class="item-badge">${p.category || "—"}</span>
+        </div>
+      </div>
+      <button class="btn-del" onclick="delProduct('${d.id}')">Delete</button>`;
+    el.appendChild(row);
+  });
+}
+
+window.delProduct = async (id) => {
+  await deleteDoc(doc(db, "products", id));
+  showToast("🗑 Product deleted");
+  loadProducts();
+};
+
+// ── LOGIN ────────────────────────────────────────────────
+window.doLogin = async () => {
+  const email = document.getElementById("bemail").value.trim();
+  const pass  = document.getElementById("bpass").value;
+  document.getElementById("authErr").textContent = "";
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+  } catch (e) {
+    document.getElementById("authErr").textContent = e.message;
+  }
+};
+
+// ── REGISTER ─────────────────────────────────────────────
+// Sets approved: null (pending) — admin must set it to true/false
+window.doRegister = async () => {
+  const shopName = document.getElementById("regShopName").value.trim();
+  const category = document.getElementById("regCategory").value.trim();
+  const phone    = document.getElementById("regPhone").value.trim();
+  const whatsapp = document.getElementById("regWhatsapp").value.trim();
+  const address  = document.getElementById("regAddress").value.trim();
+  const email    = document.getElementById("regEmail").value.trim();
+  const pass     = document.getElementById("regPass").value;
+  document.getElementById("authErr").textContent = "";
+
+  if (!shopName || !email || !pass) {
+    document.getElementById("authErr").textContent = "Shop name, email and password are required.";
+    return;
+  }
+
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+    // approved: null means pending — not shown on public listing until approved: true
+    await addDoc(collection(db, "shops"), {
+      name: shopName, category, phone, whatsapp, address,
+      uid: cred.user.uid, image: "",
+      approved: null,
+      referralCode: document.getElementById("regRefCode").value.trim().toUpperCase() || ""
+    });
+    // onAuthStateChanged auto-fires → findShop → showApprovalScreen(null) → pendingBox shown
+  } catch (e) {
+    document.getElementById("authErr").textContent = e.message;
+  }
+};
+
+// ── LOGOUT ───────────────────────────────────────────────
+window.doLogout = async () => {
+  if (shopUnsubscribe) { shopUnsubscribe(); shopUnsubscribe = null; }
+  await signOut(auth);
+};
+
+
+// DM float button
+(function(){
+  const btn = document.createElement('a');
+  btn.href = "https://wa.me/917637874618?text=" + encodeURIComponent("Hi! I want to get my business listed on Locify.");
+  btn.target = "_blank";
+  btn.style.cssText = "position:fixed;bottom:20px;right:16px;z-index:100;display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;padding:12px 18px;border-radius:30px;text-decoration:none;box-shadow:0 4px 20px rgba(37,211,102,0.35);";
+  btn.innerHTML = "💬 Want To Get Listed? DM Now";
+  document.body.appendChild(btn);
+})();
+
+</script>
+</body>
+</html>
